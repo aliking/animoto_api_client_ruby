@@ -23,13 +23,17 @@ module Animoto
       def build_curl method, url, body, headers, options
         ::Curl::Easy.new(url) do |c|
           c.http_auth_types = Curl::CURLAUTH_BASIC
-          c.username = options[:username]
-          c.password = options[:password]
-          c.timeout = options[:timeout]
           c.post_body = body
           c.ssl_verify_host = false
           c.ssl_verify_peer = false
-          c.proxy_url = options[:proxy]
+          options.each do |option, value|
+            case option
+              when :proxy #backwards compatibility with :proxy option
+                c.proxy_url = value
+              else
+                c.send("#{option}=", value)
+              end
+          end
           headers.each { |header, value| c.headers[header] = value }
         end
       end
@@ -45,6 +49,9 @@ module Animoto
         when :head
           curl.http_head
         when :get
+          unless body.nil?
+            curl.url += "?#{body}"
+          end
           curl.http_get
         when :post
           curl.http_post(body)

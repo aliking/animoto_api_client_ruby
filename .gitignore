@@ -5,3 +5,5 @@ integration/*.yml
 .bundle/*
 Gemfile.lock
 coverage/*
+/.idea
+rdoc
