@@ -8,7 +8,7 @@ module Animoto
       def request method, url, body = nil, headers = {}, options = {}
         curl = build_curl method, url, body, headers, options
         perform curl, method, body
-        [curl.response_code, curl.body_str, curl.header_str]
+        [curl.response_code, curl.body_str, curl.header_str, curl]
       end
       
       private
