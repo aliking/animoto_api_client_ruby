@@ -10,9 +10,25 @@ module Animoto
         perform curl, method, body
         [curl.response_code, curl.body_str, curl.header_str, curl]
       end
-      
+
+      # @param url [String] the URL to post to
+      # @param filepath [String] local path to the file to upload
+      # @param headers [Hash{String=>String}] hash of HTTP headers
+      # @param options [Hash{String=>String}] hash of options for curb
+      def upload url, filepath, headers = {}, options = {}
+        raise ::IOError.new("File not found") unless File.exist?(filepath)
+        body = Curl::PostField.file("myfile",filepath)
+        curl = build_curl :post,
+                          url,
+                          body,
+                          headers,
+                          options.merge({:multipart_form_post => true})
+        perform curl, :post, body
+        [curl.response_code, curl.body_str, curl.header_str, curl]
+      end
+
       private
-      
+
       # Creates a Curl::Easy object with the headers, options, body, etc. set.
       #
       # @param [Symbol] method the HTTP method
@@ -37,7 +53,7 @@ module Animoto
           headers.each { |header, value| c.headers[header] = value }
         end
       end
-      
+
       # Performs the request.
       #
       # @param [Curl::Easy] curl the Easy object with the request parameters
