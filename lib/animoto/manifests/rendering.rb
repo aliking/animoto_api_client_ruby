@@ -18,6 +18,12 @@ module Animoto
       # The storyboard this rendering targets.
       # @return [Resources::Storyboard]
       attr_accessor :storyboard
+
+      # If streaming is set to true, a "live" stream will be made available to watch while the
+      # video is rendering via HTTP Live Streaming. This stream URL will be exposed on the
+      # associated {Resources::Jobs::Rendering rendering job}.
+      # @return [Boolean]
+      attr_writer :streaming
       
       # Creates a new rendering manifest.
       #
@@ -36,8 +42,19 @@ module Animoto
         @resolution = options[:resolution]
         @framerate  = options[:framerate]
         @format     = options[:format]
+        @streaming  = options[:streaming]
+        # We may or may not ever support other streaming formats
+        @streaming_format = "http_live_streaming"
       end
     
+      # Returns true if an HTTP Live Streaming URL will be created for this video while it's
+      # rendering.
+      #
+      # @return [Boolean]
+      def streaming?
+        @streaming
+      end
+
       # Returns a representation of this manifest as a Hash.
       #
       # @return [Hash{String=>Object}] this manifest as a Hash
@@ -52,6 +69,10 @@ module Animoto
         params['resolution'] = resolution
         params['framerate'] = framerate
         params['format'] = format
+        if streaming?
+          params['streaming_parameters'] = {}
+          params['streaming_parameters']['format'] = @streaming_format
+        end
         hash
       end    
     end

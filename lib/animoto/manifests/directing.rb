@@ -1,3 +1,7 @@
+require 'animoto/styles'
+require 'animoto/postroll'
+require 'animoto/postrolls/custom_footage'
+
 module Animoto
   module Manifests
     class Directing < Animoto::Manifests::Base
@@ -14,7 +18,7 @@ module Animoto
       # is 'auto'.
       # @return [String]
       attr_accessor :pacing
-      
+
       # The array of visual objects in this manifest.
       # @return [Array<Assets::Base,Assets::TitleCard>]
       attr_reader   :visuals
@@ -23,23 +27,31 @@ module Animoto
       # @return [Assets::Song]
       attr_reader   :song
       
-      # The 'style' for this video. Currently, the only style available is 'original'.
+      # The 'style' for this video. Available styles are listed in {Animoto::Styles}.
+      # Your partner account might have different styles available from those listed.
       # @return [String]
-      attr_reader   :style
+      attr_accessor :style
+
+      # The 'postroll' for this video. Postrolls are the short video 'outro' segements
+      # that play when the main video is finished.
+      # @return [Animoto::Postroll]
+      attr_reader   :postroll
 
       # Creates a new directing manifest.
       #
-      # @param [Hash] options
+      # @param [Hash{Symbol=>Object}] options
       # @option options [String] :title the title of this project
       # @option options [String] :pacing ('auto') the pacing for this project
+      # @option options [String,Animoto::Postroll] :postroll the postroll for this project
       # @option options [String] :http_callback_url a URL to receive a callback when this job is done
       # @option options [String] :http_callback_format the format of the callback
       # @return [Manifests::Directing] the manifest
       def initialize options = {}
         super
         @title      = options[:title]
-        @pacing     = options[:pacing] || 'auto'
-        @style      = 'original'
+        @pacing     = options[:pacing]  || 'auto'
+        @style      = options[:style]   || Animoto::Styles::ORIGINAL
+        @postroll   = Animoto::Postroll.new(options[:postroll] || Animoto::Postroll::POWERED_BY_ANIMOTO)
         @visuals    = []
         @song       = nil
       end
@@ -112,6 +124,14 @@ module Animoto
         self
       end
 
+      # Sets the postroll for this project.
+      #
+      # @param [String,Animoto::Postroll] roll a postroll object or the postroll's template name
+      # @return [Animoto::Postroll]
+      def postroll= roll
+        @postroll = Animoto::Postroll.new(roll)
+      end
+
       # Returns a representation of this manifest as a Hash.
       #
       # @return [Hash{String=>Object}] the manifest as a Hash
@@ -120,18 +140,18 @@ module Animoto
         hash = { 'directing_job' => { 'directing_manifest' => {} } }
         job  = hash['directing_job']
         add_callback_information job
-        manifest = job['directing_manifest']
-        manifest['style'] = style
-        manifest['pacing'] = pacing if pacing
-        manifest['title'] = title if title
-        manifest['visuals'] = []
+        manifest              = job['directing_manifest']
+        manifest['style']     = style
+        manifest['pacing']    = pacing if pacing
+        manifest['postroll']  = postroll.to_hash if postroll
+        manifest['title']     = title if title
+        manifest['visuals']   = []
         visuals.each do |visual|
           manifest['visuals'] << visual.to_hash
         end
         manifest['song'] = song.to_hash if song
         hash
       end
-    
     end
   end
 end

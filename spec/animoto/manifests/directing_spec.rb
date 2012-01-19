@@ -20,11 +20,51 @@ describe Animoto::Manifests::Directing do
     end
     
     it "should default to 'original' style" do
-      manifest.style.should == 'original'
+      manifest.style.should == Animoto::Styles::ORIGINAL
+    end
+
+    it "should be able to specify the style with a :style parameter" do
+      manifest(:style => Animoto::Styles::VINTAGE).style.should == Animoto::Styles::VINTAGE
+    end
+
+    it "should default to having the 'powered by animoto' postroll" do
+      manifest.postroll.should == Animoto::Postroll::POWERED_BY_ANIMOTO
+    end
+
+    it "should be able to specify the postroll with a :postroll parameter" do
+      manifest(:postroll => Animoto::Postroll::WHITE_LABEL).postroll.should == Animoto::Postroll::WHITE_LABEL
     end
     
-    it "should default to having to visuals" do
+    it "should default to having no visuals" do
       manifest.visuals.should be_empty
+    end
+  end
+
+  describe "setting the postroll" do
+    before do
+      @manifest = manifest()
+    end
+
+    describe "with a string" do
+      before do
+        @postroll = "fancy"
+        @manifest.postroll = @postroll
+      end
+
+      it "should set the postroll to a new postroll object with the given template" do
+        @manifest.postroll.template.should == @postroll
+      end
+    end
+
+    describe "with another Postroll" do
+      before do
+        @postroll = Animoto::Postroll::CustomFootage.new("http://postrollz.com/postroll.mp4")
+        @manifest.postroll = @postroll
+      end
+
+      it "should set the postroll to the given postroll object" do
+        @manifest.postroll.should eql(@postroll)
+      end
     end
   end
   
@@ -118,6 +158,11 @@ describe Animoto::Manifests::Directing do
     it "should have a 'song' object in the manifest" do
       manifest.to_hash['directing_job']['directing_manifest'].should have_key('song')
       manifest.to_hash['directing_job']['directing_manifest']['song'].should be_a(Hash)
+    end
+
+    it "should have a 'postroll' object in the manifest" do
+      manifest.to_hash['directing_job']['directing_manifest'].should have_key('postroll')
+      manifest.to_hash['directing_job']['directing_manifest']['postroll'].should be_a(Hash)
     end
     
     describe "when the callback url is set" do

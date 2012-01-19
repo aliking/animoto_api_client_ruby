@@ -36,6 +36,10 @@ describe Animoto::Manifests::Rendering do
       manifest.http_callback_url.should == "http://website.com/callback"
       manifest.http_callback_format.should == 'xml'
     end
+
+    it "should take a :streaming parameter to set streaming" do
+      manifest(:streaming => true).streaming?.should be_true
+    end
   end
   
   describe "generating a hash" do
@@ -43,7 +47,7 @@ describe Animoto::Manifests::Rendering do
       @storyboard = Animoto::Resources::Storyboard.new
       @url = "http://platform.animoto.com/storyboards/1"
       @storyboard.instance_variable_set(:@url, @url)
-      manifest(@storyboard, :resolution => "720p", :framerate => 24, :format => 'flv')
+      manifest(@storyboard, :resolution => "720p", :framerate => 24, :format => 'flv', :streaming => true)
     end
     
     it "should have a top-level 'rendering_job' object" do
@@ -81,6 +85,21 @@ describe Animoto::Manifests::Rendering do
       
       it "should have a 'format' key" do
         @profile['format'].should == manifest.format
+      end
+
+      describe "streaming parameters" do
+        before do
+          @streaming_params = manifest.to_hash['rendering_job']['rendering_manifest']['rendering_parameters']['streaming_parameters']
+        end
+
+        it "should be present if streaming is enabled" do
+          @streaming_params.should_not be_nil
+        end
+
+        it "should have a 'format' key with the streaming format" do
+          @streaming_params.should have_key('format')
+          @streaming_params['format'].should == manifest.instance_variable_get(:@streaming_format)
+        end
       end
     end
     

@@ -23,7 +23,7 @@ Animoto services from a Ruby environment or using the Ruby language.
 <a name="what_is_covered_in_this_document"></a>
 ## What is covered in this document
 
-This document covers the technical details of the Animoto API Ruby client and 
+This document covers the technical details of the Animoto API Ruby client and
 provides a general overview of its use.
 
 This document does not cover the details of the Animoto API itself. For such information please see the [Animoto API documentation][api_docs]
@@ -97,32 +97,32 @@ client and using HTTP callbacks for status updates.
     # Create a new client using our application key and secret
     client = Client.new("application_key", "secret")
 
-    # create a directing and rendering manifest with the video title and 
+    # create a directing and rendering manifest with the video title and
     # producer.  Also include rendering parameters like resolution, framerate,
     # and format.
     manifest = Manifests::DirectingAndRendering.new(
-      :title => "Amazing Title!", 
-      :resolution => "720p", 
-      :framerate => 24, 
+      :title => "Amazing Title!",
+      :resolution => "720p",
+      :framerate => 24,
       :format => 'h264'
     )
-    
+
     # Add some images, text, and footage to our manifest.
     manifest << Assets::Image.new("http://website.com/picture.png")
     manifest << Assets::Image.new("http://website.com/hooray.png", :spotlit => true)
     manifest << Assets::TitleCard.new("Woohoo!", "Hooray for everything!")
     manifest << Assets::Footage.new("http://website.com/movie.mp4", :duration => 3.5)
-    
+
     # Setup the soundtrack.
     manifest << Assets::Song.new("http://website.com/song.mp3", :artist => "Fishy Joe")
-    
-    # Setup to get http callbacks for status notification (see below for 
+
+    # Setup to get http callbacks for status notification (see below for
     # polling example).
     manifest.http_callback_url = "http://mysite.com/animoto_callback"
     manifest.http_callback_format = "json"
 
-    # Send the manifest to the API.  Your app will be notified of 
-    # completion/failure via an HTTP POST to 
+    # Send the manifest to the API.  Your app will be notified of
+    # completion/failure via an HTTP POST to
     # "http://mysite.com/animoto_callback"
     client.direct_and_render!(manifest)
 
@@ -141,29 +141,29 @@ status.
     # Create a directing manifest.  The directing manifest controls the images
     # and other visual elements that will be in our final video.
     manifest = Manifests::Directing.new(:title => "Amazing Title!")
-    
+
     # Add some images, text, and footage to our manifest.
     manifest << Assets::Image.new("http://website.com/picture.png")
     manifest << Assets::Image.new("http://website.com/hooray.png", :spotlit => true)
     manifest << Assets::TitleCard.new("Woohoo!", "Hooray for everything!")
     manifest << Assets::Footage.new("http://website.com/movie.mp4", :duration => 3.5)
-    
+
     # Setup the soundtrack.
     manifest << Assets::Song.new("http://website.com/song.mp3")
 
     # Request a new directing job by sending the API our directing manifest.
     directing_job = client.direct!(manifest)
-    
+
     # Poll the service until the directing job is done.
     while directing_job.pending?
       sleep(30)
       client.reload!(directing_job)
     end
 
-    # If the directing job finished successfully, there will be a "storyboard" 
+    # If the directing job finished successfully, there will be a "storyboard"
     # associated with this job.
     if storyboard = directing_job.storyboard
-    
+
       # Now it's time to render the storyboard into a video.  First we create
       # a rendering manifest.
       manifest = Manifests::Rendering.new(
@@ -172,10 +172,10 @@ status.
         :framerate => 24,
         :format => 'h264'
       )
-      
+
       # Send the manifest to the API.
       rendering_job = client.render!(manifest)
-      
+
       # Poll the service until the rendering job is done
       while rendering_job.pending?
         sleep(30)
@@ -192,7 +192,7 @@ status.
         raise rendering_job.errors.first
       end
     else
-      # Looks like there was a problem. Perhaps one of the assets wasn't 
+      # Looks like there was a problem. Perhaps one of the assets wasn't
       # retrieved or was corrupt...
       raise directing_job.errors.first
     end
@@ -208,17 +208,17 @@ be rendered.
 
     require 'animoto/client'
     include Animoto
-    
+
     client = Client.new("key", "secret")
-    
+
     # Make a directing manifest and direct it as detailed above.
     # Afterwards, we can make a StoryboardBundling manifest and bundle up the
     # storyboard we just made.
-    
+
     storyboard = directing_job.storyboard
     bundling_manifest = Manifests::StoryboardBundling.new(storyboard)
     bundling_job = client.bundle!(bundling_manifest)
-    
+
     # Poll the service until the bundling job is complete.
     # As with all jobs, HTTP callbacks are also supported, but we're just
     # going for a simple example here.
@@ -226,33 +226,33 @@ be rendered.
       sleep(30)
       client.reload!(bundling_job)
     end
-    
+
     # The bundle_url returned points to where you can download the storyboard
     # bundle. Downloading the bundle and archiving it elsewhere is outside the
     # scope of the client's functionality.
     puts bundling_job.bundle_url
-    
+
     # After you have a handle for the storyboard bundle, the original storyboard
     # can be deleted.
     client.delete!(storyboard)
-    
+
 Turning a bundle back into a storyboard is just as simple.
 
     require 'animoto/client'
     include Animoto
-    
+
     client = Client.new("key", "secret")
-    
+
     # Make a storyboard unbundling manifest with the url to your archived storyboard bundle.
-    unbundling_manifest = Manifest::StoryboardUnbundling.new(:bundle_url => "http://your-storage-solution.com/path/to/your/bundle")
+    unbundling_manifest = Manifests::StoryboardUnbundling.new(:bundle_url => "http://your-storage-solution.com/path/to/your/bundle")
     unbundling_job = client.unbundle!(unbundling_manifest)
-    
+
     # Poll the service until unbundling is complete.
     while unbundling_job.pending?
       sleep(30)
       client.reload!(unbundling_job)
     end
-    
+
     # Now you can use the storyboard to render a video.
     rendering_manifest = Manifests::Rendering.new(
       unbundling_job.storyboard,
@@ -261,9 +261,9 @@ Turning a bundle back into a storyboard is just as simple.
       :format => 'h264'
     )
     rendering_job = client.render!(rendering_manifest)
-    
+
     # Now proceed with using your render as detailed above.
-    
+
 
 <a name="how_to_contribute"></a>
 ## How to contribute to this client
@@ -279,21 +279,21 @@ on coding standards, new features, etc.
 
 ## Copyright Information
 
-Copyright © 2010 Animoto Inc. All rights reserved. 
+Copyright © 2010 Animoto Inc. All rights reserved.
 
-Notice – this software is owned by Animoto Inc. (“Animoto”) and is being licensed to you in source code form on the condition that you comply these terms. By continuing to use the software, you are agreeing to be bound by these terms. If you disagree with these terms, you must immediately stop using the software and permanently destroy it, or return it to Animoto. 
+Notice – this software is owned by Animoto Inc. (“Animoto”) and is being licensed to you in source code form on the condition that you comply these terms. By continuing to use the software, you are agreeing to be bound by these terms. If you disagree with these terms, you must immediately stop using the software and permanently destroy it, or return it to Animoto.
 
-Animoto hereby grants to you a limited, personal, worldwide, nontransferable license to copy, execute, compile, reproduce, modify, prepare and have prepared derivative works of the software solely for the Purpose. The “Purpose” shall mean use of the software for accessing the Animoto Application Programming Interface (“API”) in accordance with Animoto’s Terms of Service, and any other terms and conditions applicable to your Animoto user account. 
+Animoto hereby grants to you a limited, personal, worldwide, nontransferable license to copy, execute, compile, reproduce, modify, prepare and have prepared derivative works of the software solely for the Purpose. The “Purpose” shall mean use of the software for accessing the Animoto Application Programming Interface (“API”) in accordance with Animoto’s Terms of Service, and any other terms and conditions applicable to your Animoto user account.
 
-For purposes of clarity, you agree that you have no right to use the software for any other purpose other than the Purpose as defined above. This license does not include the right to distribute, transfer, sell, or otherwise commercialize the software or any portion thereof. 
+For purposes of clarity, you agree that you have no right to use the software for any other purpose other than the Purpose as defined above. This license does not include the right to distribute, transfer, sell, or otherwise commercialize the software or any portion thereof.
 
-To the extent you make any derivative works from software, you hereby grant back to Animoto a worldwide, irrevocable, perpetual, sublicenseable, assignable, royalty-free license to such derivative works, in source and object code form. 
+To the extent you make any derivative works from software, you hereby grant back to Animoto a worldwide, irrevocable, perpetual, sublicenseable, assignable, royalty-free license to such derivative works, in source and object code form.
 
-You agree to include these terms in all copies made of the software, and to not remove or alter the above copyright notice or these terms in such copies. 
+You agree to include these terms in all copies made of the software, and to not remove or alter the above copyright notice or these terms in such copies.
 
-THIS SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR THE WARRANTY OF NON-INFRINGEMENT. 
+THIS SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR THE WARRANTY OF NON-INFRINGEMENT.
 
-IN NO EVENT SHALL ANIMOTO BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY SPECIAL, PUNITIVE, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER, INCLUDING, WITHOUT LIMITATION, THOSE RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT ANIMOTO HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, AND ON ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OF THIS SOFTWARE. 
+IN NO EVENT SHALL ANIMOTO BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY SPECIAL, PUNITIVE, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER, INCLUDING, WITHOUT LIMITATION, THOSE RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT ANIMOTO HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, AND ON ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OF THIS SOFTWARE.
 
 You agree to indemnify defend and hold Animoto, its parents, subsidiaries, affiliates, officers and employees, harmless from any liabilities, claims, expenses or demands, including reasonable attorneys’ fees and costs, made by any third party due to or arising out of your use of this software, derivative works created by you, the violation of laws, rules, regulations or these terms, and the infringement of any intellectual property right by your derivative works or by you.
 
