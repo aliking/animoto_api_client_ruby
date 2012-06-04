@@ -26,7 +26,7 @@ module Animoto
       # @return [Manifests::DirectingAndRendering] the manifest
       def initialize options = {}
         super
-        @directing_manifest = Manifests::Directing.new(options.only(:title, :pacing))
+        @directing_manifest = Manifests::Directing.new(options.only(:title, :pacing, :max_duration))
         @rendering_manifest = Manifests::Rendering.new(options.only(:resolution, :framerate, :format))
       end
 

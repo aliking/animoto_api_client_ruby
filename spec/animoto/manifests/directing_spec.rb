@@ -19,12 +19,16 @@ describe Animoto::Manifests::Directing do
       manifest(:pacing => 'fast').pacing.should == 'fast'
     end
     
+    it "should be able to specify the max_duration with a :max_duration parameter" do
+      manifest(:max_duration => '30').max_duration.should == '30'
+    end
+    
     it "should default to 'original' style" do
-      manifest.style.should == Animoto::Styles::ORIGINAL
+      manifest.style.should == Animoto::Styles::ANIMOTO_ORIGINAL
     end
 
     it "should be able to specify the style with a :style parameter" do
-      manifest(:style => Animoto::Styles::VINTAGE).style.should == Animoto::Styles::VINTAGE
+      manifest(:style => Animoto::Styles::VINTAGE_VOYAGE).style.should == Animoto::Styles::VINTAGE_VOYAGE
     end
 
     it "should default to having the 'powered by animoto' postroll" do
@@ -149,6 +153,33 @@ describe Animoto::Manifests::Directing do
     it "should have a 'pacing' key in the manifest" do
       manifest.to_hash['directing_job']['directing_manifest'].should have_key('pacing')
       manifest.to_hash['directing_job']['directing_manifest']['pacing'].should == manifest.pacing
+    end
+    
+    it "should not have a 'fitting' key in the manifest" do
+      manifest.to_hash['directing_job']['directing_manifest'].should_not have_key('fitting')
+    end
+
+    describe "with a max_duration option" do
+      before do
+        opts = {:title => 'Funderful Wonderment', :pacing => 'double', :max_duration => '30'}
+        @mfest = Animoto::Manifests::Directing.new(opts)
+        @title_card = @mfest.add_title_card 'woohoo', 'this is awesome'
+        @song_obj = @mfest.add_song 'http://website.com/song.mp3'
+      end
+
+      it "should have a 'fitting' key in the manifest" do
+        @mfest.to_hash['directing_job']['directing_manifest'].should have_key('fitting')
+      end
+
+      it "should have a 'max_duration' key in the manifest" do
+        @mfest.to_hash['directing_job']['directing_manifest']['fitting'].should have_key('max_duration')
+        @mfest.to_hash['directing_job']['directing_manifest']['fitting']['max_duration'].should == @mfest.max_duration
+      end
+
+      it "should have a 'type' key in the manifest" do
+        @mfest.to_hash['directing_job']['directing_manifest']['fitting'].should have_key('type')
+        @mfest.to_hash['directing_job']['directing_manifest']['fitting']['type'].should == 'best_fit'
+      end
     end
     
     it "should have a 'visuals' key in the manifest" do

@@ -19,6 +19,10 @@ module Animoto
       # @return [String]
       attr_accessor :pacing
 
+      # The maximum duration in seconds. Optional.
+      # #return [String]
+      attr_accessor :max_duration
+
       # The array of visual objects in this manifest.
       # @return [Array<Assets::Base,Assets::TitleCard>]
       attr_reader   :visuals
@@ -50,7 +54,8 @@ module Animoto
         super
         @title      = options[:title]
         @pacing     = options[:pacing]  || 'auto'
-        @style      = options[:style]   || Animoto::Styles::ORIGINAL
+        @max_duration = options[:max_duration]
+        @style      = options[:style]   || Animoto::Styles::ANIMOTO_ORIGINAL
         @postroll   = Animoto::Postroll.new(options[:postroll] || Animoto::Postroll::POWERED_BY_ANIMOTO)
         @visuals    = []
         @song       = nil
@@ -143,6 +148,7 @@ module Animoto
         manifest              = job['directing_manifest']
         manifest['style']     = style
         manifest['pacing']    = pacing if pacing
+        manifest['fitting']   = {'type' => 'best_fit', 'max_duration' => @max_duration} if @max_duration
         manifest['postroll']  = postroll.to_hash if postroll
         manifest['title']     = title if title
         manifest['visuals']   = []

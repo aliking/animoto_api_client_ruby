@@ -98,7 +98,36 @@ describe Animoto::Manifests::DirectingAndRendering do
           @hash.should have_key('song')
           @hash['song'].should be_a(Hash)
         end
-    
+
+        it "should not have a 'fitting' hash in the manifest" do
+          @hash.should_not have_key('fitting')
+        end
+
+        describe "with a 'max_duration' option" do
+          before do
+            opts = {:title => 'Funderful Wonderment', :pacing => 'double', :resolution => "720p",
+              :framerate => 24, :format => 'flv', :max_duration => '30'}
+            @mfest = Animoto::Manifests::DirectingAndRendering.new(opts)
+            @title_card = @mfest.add_title_card 'woohoo', 'this is awesome'
+            @song_obj = @mfest.add_song 'http://website.com/song.mp3'
+            @hash = @mfest.to_hash['directing_and_rendering_job']['directing_manifest']
+          end
+
+          it "should have a 'fitting' hash in the manifest" do
+            @hash.should have_key('fitting')
+          end
+
+          it "should specify a max duration in the manifest" do
+            @hash['fitting'].should have_key('max_duration')
+            @hash['fitting']['max_duration'].should == '30'
+          end
+
+          it "should specify a type in the manifest" do
+            @hash['fitting'].should have_key('type')
+            @hash['fitting']['type'].should == 'best_fit'
+          end
+        end
+
         describe "visuals array" do
           before do
             @visuals = @hash['visuals']
