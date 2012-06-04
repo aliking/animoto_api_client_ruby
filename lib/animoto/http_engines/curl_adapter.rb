@@ -3,7 +3,11 @@ require 'curl'
 module Animoto
   module HTTPEngines
     class CurlAdapter < Animoto::HTTPEngines::Base
-      
+
+      def initialize
+
+      end
+
       # @return [String]
       def request method, url, body = nil, headers = {}, options = {}
         curl = build_curl method, url, body, headers, options
@@ -12,7 +16,17 @@ module Animoto
       end
 
       private
-      
+
+      def curl_instance url
+        if @curleasy.nil?
+          @curleasy = ::Curl::Easy.new(url)
+        else
+          @curleasy.reset
+          @curleasy.url = url
+        end
+        @curleasy
+      end
+
       # Creates a Curl::Easy object with the headers, options, body, etc. set.
       #
       # @param [Symbol] method the HTTP method
@@ -21,7 +35,7 @@ module Animoto
       # @param [Hash{String=>String}] headers hash of HTTP request headers
       # @return [Curl::Easy] the Easy instance
       def build_curl method, url, body, headers, options
-        ::Curl::Easy.new(url) do |c|
+        curl_instance(url) do |c|
           c.http_auth_types = Curl::CURLAUTH_BASIC
           c.post_body = body
           c.ssl_verify_host = false
