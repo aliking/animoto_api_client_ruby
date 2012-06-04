@@ -24,7 +24,7 @@ module Animoto
           @curleasy.reset
           @curleasy.url = url
         end
-        @curleasy
+        yield @curleasy
       end
 
       # Creates a Curl::Easy object with the headers, options, body, etc. set.
@@ -49,6 +49,7 @@ module Animoto
               end
           end
           headers.each { |header, value| c.headers[header] = value }
+          c
         end
       end
       
