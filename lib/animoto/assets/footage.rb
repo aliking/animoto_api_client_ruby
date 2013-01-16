@@ -54,7 +54,7 @@ module Animoto
       # @see Animoto::Assets::Base#to_hash
       def to_hash
         hash = super
-        hash['audio_mix'] = 'MIX' if audio_mix
+        hash['audio_mix'] = audio_mix if audio_mix
         hash['start_time'] = start_time if start_time
         hash['duration'] = duration if duration
         hash['rotation'] = rotation if rotation

@@ -45,7 +45,7 @@ describe Animoto::Assets::Footage do
     
     describe "if audio mixing is turned on" do
       before do
-        @footage.audio_mix = true
+        @footage.audio_mix = 'MIX'
       end
       
       it "should have an 'audio_mix' key telling how to mix" do

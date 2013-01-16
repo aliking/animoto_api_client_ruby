@@ -3,7 +3,7 @@ module Animoto
     class Rendering < Animoto::Manifests::Base
     
       # The vertical resolution of the rendered video. Valid values are '180p', '270p',
-      # '360p', '480p', '576p', '720p' or '1080p'.
+      # '360p', '480p', or '720p'.
       # @return [String]
       attr_accessor :resolution
       
@@ -11,7 +11,7 @@ module Animoto
       # @return [Integer]
       attr_accessor :framerate
       
-      # The format of the rendered video. Valid values are 'h264', 'h264-iphone', 'flv' or 'iso'.
+      # The format of the rendered video. Valid values are 'h264'.
       # @return [String]
       attr_accessor :format
       
@@ -45,7 +45,7 @@ module Animoto
         @streaming  = options[:streaming]
         # We may or may not ever support other streaming formats
         @streaming_format = "http_live_streaming"
-      end
+     end
     
       # Returns true if an HTTP Live Streaming URL will be created for this video while it's
       # rendering.

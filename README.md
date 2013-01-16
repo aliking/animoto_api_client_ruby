@@ -102,7 +102,9 @@ client and using HTTP callbacks for status updates.
     # and format.
     manifest = Manifests::DirectingAndRendering.new(
       :title => "Amazing Title!",
-      :resolution => "720p",
+      :resolution => "360p",
+	  :style => "original",
+	  :pacing => "fast",
       :framerate => 24,
       :format => 'h264'
     )
@@ -140,7 +142,7 @@ status.
 
     # Create a directing manifest.  The directing manifest controls the images
     # and other visual elements that will be in our final video.
-    manifest = Manifests::Directing.new(:title => "Amazing Title!")
+    manifest = Manifests::Directing.new(:title => "Amazing Title!", :pacing => "fast", :style => "original")
 
     # Add some images, text, and footage to our manifest.
     manifest << Assets::Image.new("http://website.com/picture.png")
@@ -168,7 +170,7 @@ status.
       # a rendering manifest.
       manifest = Manifests::Rendering.new(
         storyboard,
-        :resolution => "720p",
+        :resolution => "360p",
         :framerate => 24,
         :format => 'h264'
       )
