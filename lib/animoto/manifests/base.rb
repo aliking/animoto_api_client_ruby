@@ -28,14 +28,20 @@ module Animoto
       # @return [String]
       attr_accessor :http_callback_format
 
+      attr_accessor :partner_metadata
+
       # Creates a new manifest
       #
       # @param [Hash{Symbol=>Object}] options
       # @option options [String] :http_callback_url a URL to receive a callback when this job is done
       # @option options [String] :http_callback_format the format of the callback
+      # @option options [String] :partner_metadata an array of hashes with a predefined format containing  
+      #   the hashes for ['partner_user_id', 'commercial_use', 'partner_intent', 'application_data']
+      #   where application_data is an array of hashes ['title', 'id', 'kind', 'type']
       def initialize options = {}
         @http_callback_url  = options[:http_callback_url]
         @http_callback_format = options[:http_callback_format]
+        @partner_metadata  = options[:partner_metadata]
       end
 
       # Returns a representation of this manifest as a Hash, used to populate
@@ -55,6 +61,16 @@ module Animoto
       end
       
       private
+
+      # Helper method to put the partner_metadata into the manifest hash
+      #
+      # @param [Hash{String=>Object}] job_hash the hash version of the 'job' portion of this manifest
+      # @return [void]
+      def add_partner_metadata job_hash
+        if partner_metadata
+          job_hash['partner_metadata'] = partner_metadata
+        end
+      end
       
       # Helper method to put the standard HTTP callback information into the manifest hash
       #

@@ -20,6 +20,17 @@ describe Animoto::Manifests::DirectingAndRendering do
       manifest.to_hash.should have_key('directing_and_rendering_job')
       manifest.to_hash['directing_and_rendering_job'].should be_a(Hash)
     end
+
+    describe "when the partner metadata is set" do
+      before do
+        manifest.partner_metadata = {'partner_user_id' => '234', 'commercial_use' => 'No'}
+      end
+
+      it "should have the HTTP callback URL in the job" do
+        manifest.to_hash['directing_and_rendering_job'].should have_key('partner_metadata')
+        manifest.to_hash['directing_and_rendering_job']['partner_metadata'].should == manifest.partner_metadata
+      end
+    end
     
     describe "when the callback url is set" do
       before do

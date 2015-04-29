@@ -27,6 +27,11 @@ module Animoto
         @cover
       end
 
+      # Whether or not this image has a caption. If a caption is added, it will appear with the
+      # image in the video.
+      # @return [String]
+      attr_accessor :caption
+
       # Creates a new Image object.
       #
       # @param [String] source the source URL of this image
@@ -34,12 +39,14 @@ module Animoto
       # @option options [Integer] :rotation the number of clockwise 90-degree rotations to apply to this image
       # @option options [Boolean] :spotlit whether or not to spotlight this image
       # @option options [Boolean] :cover whether or not to generate the cover of this video from this image
+      # @option options [String] :caption the text that should be displayed with the image
       # @return [Assets::Image] the Image object
       def initialize source, options = {}
         super
         @rotation = options[:rotation]
         @spotlit  = options[:spotlit]
         @cover    = options[:cover]
+        @caption = options[:caption]
       end
       
       # Returns a representation of this Image as a Hash.
@@ -51,6 +58,7 @@ module Animoto
         hash['rotation'] = rotation if rotation
         hash['spotlit'] = spotlit? unless @spotlit.nil?
         hash['cover'] = cover? unless @cover.nil?
+        hash['caption'] = caption unless @caption.nil?
         hash
       end
     end

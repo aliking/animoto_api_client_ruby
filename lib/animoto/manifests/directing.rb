@@ -145,6 +145,7 @@ module Animoto
         hash = { 'directing_job' => { 'directing_manifest' => {} } }
         job  = hash['directing_job']
         add_callback_information job
+        add_partner_metadata job
         manifest              = job['directing_manifest']
         manifest['style']     = style
         manifest['pacing']    = pacing if pacing

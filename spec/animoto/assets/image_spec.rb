@@ -5,7 +5,7 @@ describe Animoto::Assets::Image do
   describe "initialization" do
     before do
       @image = Animoto::Assets::Image.new 'http://website.com/image.png',
-        :rotation => 2, :spotlit => true, :cover => true
+        :rotation => 2, :spotlit => true, :cover => true, :caption => 'This is my caption'
     end
     
     it "should set the source to the given url" do
@@ -22,6 +22,10 @@ describe Animoto::Assets::Image do
     
     it "should set the cover to the given value" do
       @image.should be_a_cover
+    end
+
+    it "should set the caption to the given text" do
+      @image.caption.should == 'This is my caption'
     end
   end
 
@@ -67,5 +71,17 @@ describe Animoto::Assets::Image do
         @image.to_hash['cover'].should == @image.cover?
       end
     end
+
+    describe "if caption is given" do
+      before do
+        @image.caption = "This is my caption"
+      end
+
+      it "it should have a 'caption' key with the caption value" do
+        @image.to_hash.should have_key('caption')
+        @image.to_hash['caption'].should == @image.caption
+      end
+    end
+
   end
 end
