@@ -63,6 +63,7 @@ module Animoto
         hash  = { 'rendering_job' => { 'rendering_manifest' => { 'rendering_parameters' => {} } } }
         job   = hash['rendering_job']
         add_callback_information job
+        add_partner_metadata job
         manifest = job['rendering_manifest']
         manifest['storyboard_url'] = storyboard.url if storyboard
         params = manifest['rendering_parameters']

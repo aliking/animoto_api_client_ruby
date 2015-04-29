@@ -6,6 +6,6 @@ module Animoto
   #
   # @return [String]
   def self.version
-    "1.5.3"
+    "1.5.6"
   end
 end

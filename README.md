@@ -44,6 +44,15 @@ Or by cloning [the repository](http://github.com/animoto/animoto_api_client_ruby
     gem build animoto.gemspec
     gem install animoto-1.1.0.gem
 
+### Publishing the gem
+    The authors can publish the animoto gem by building it and then pushing it.
+      1. Run the following command to build to the gem :
+          gem build animoto.gemspec 
+      2. Run the following command to push the gem to ruby.org :
+          gem push <gem_name>  (eg: gem push animoto-1.5.6.gem)
+    Note that you must be able to be registered with animoto's ruby.org accout to publish the updates.
+
+
 ### Prerequisites
 
 #### Readers of this document should be familiar with...

@@ -1,4 +1,5 @@
 require 'rspec/core/rake_task'
+require 'ci/reporter/rake/rspec'
 
 task 'default' => 'test:spec'
 
@@ -10,10 +11,14 @@ namespace :test do
   
   namespace :spec do
     RSpec::Core::RakeTask.new('rcov') do |t|
-      t.pattern = 'spec/**/*_spec.rb'
       t.rcov = true
+      t.pattern = 'spec/**/*_spec.rb'
+      t.rcov_opts =  %q[--exclude gems,spec]
     end
   end
+
+  desc "Jenkins optimized tests"
+  task 'jenkins' => ['ci:setup:rspec','spec:rcov']
 end
 
 namespace :docs do
