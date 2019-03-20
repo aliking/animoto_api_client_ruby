@@ -52,7 +52,7 @@ module Animoto
           c
         end
       end
-      
+
       # Performs the request.
       #
       # @param [Curl::Easy] curl the Easy object with the request parameters
@@ -67,6 +67,7 @@ module Animoto
           unless body.nil?
             curl.url += "?#{body}"
           end
+	  curl.post_body = nil
           curl.http_get
         when :post
           curl.http_post(body)
@@ -74,8 +75,10 @@ module Animoto
           curl.http_put(body)
         when :delete
           curl.http_delete
+         when :patch
+           curl.http(:PATCH)
         end
       end
-    end    
+    end
   end
 end
